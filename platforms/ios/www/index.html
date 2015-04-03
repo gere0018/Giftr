@@ -1,41 +1,165 @@
-<!DOCTYPE html>
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one
-    or more contributor license agreements.  See the NOTICE file
-    distributed with this work for additional information
-    regarding copyright ownership.  The ASF licenses this file
-    to you under the Apache License, Version 2.0 (the
-    "License"); you may not use this file except in compliance
-    with the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing,
-    software distributed under the License is distributed on an
-    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-     KIND, either express or implied.  See the License for the
-    specific language governing permissions and limitations
-    under the License.
--->
+<!doctype html>
 <html>
-    <head>
-        <meta charset="utf-8" />
-        <meta name="format-detection" content="telephone=no" />
-        <meta name="msapplication-tap-highlight" content="no" />
-        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
-        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
-        <link rel="stylesheet" type="text/css" href="css/index.css" />
-        <title>Hello World</title>
-    </head>
-    <body>
-        <div class="app">
-            <h1>Apache Cordova</h1>
-            <div id="deviceready" class="blink">
-                <p class="event listening">Connecting to Device</p>
-                <p class="event received">Device is Ready</p>
-            </div>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="user-scalable=no, width=device-width,
+                                   initial-scale=1, maximum-scale=1">
+    <title>GIFTR</title>
+	<link href="css/styles.css" rel="stylesheet"/>
+
+</head>
+<body>
+	<div class="wrapper">
+		<!-- container for all pages -->
+<!--************************************** People List **************************************-->
+		<section data-role="page" id="people-list" class = "activePage">
+			<h2>People <button class="btnAdd">+</button></h2>
+			<p class="details">
+			Here are all the people for which <em>you</em> buy gifts.
+			</p>
+			<ul data-role="listview" id = "peopleListview">
+                  <li data-ref="1">List Item 1</li>
+                  <li data-ref="2">List Item 2</li>
+                  <li data-ref="3">List Item 3</li>
+                  <li data-ref="4">List Item 4</li>
+                  <li data-ref="5">List Item 5</li>
+                  <li data-ref="6">List Item 6</li>
+				<!--
+				list of items to be dynamically added
+				single-tap to add gift for person through gifts-for-person page
+				double-tap to remove person
+				-->
+			</ul>
+		</section>
+<!--*********************************** Occaision List **************************************-->
+		<section data-role="page" id="occasion-list">
+			<h2>Occasions <button class="btnAdd">+</button></h2>
+			<p class="details">
+			Here is the list of occasions when <em>you</em> buy gifts.
+			</p>
+			<ul data-role="listview" id = "occasionListview">
+                <li data-ref="1">List Item 1</li>
+                  <li data-ref="2">List Item 2</li>
+                  <li data-ref="3">List Item 3</li>
+                  <li data-ref="4">List Item 4</li>
+                  <li data-ref="5">List Item 5</li>
+                  <li data-ref="6">List Item 6</li>
+				<!--
+				list of items to be dynamically added
+				single-tap to add gift for occasion through gifts-for-occasion page
+				double-tap to remove occasion
+				-->
+			</ul>
+		</section>
+<!--********************************** Gifts for person **********************************-->
+		<section data-role="page" id="gifts-for-person">
+			<h2>Gift Ideas <button class="btnAdd">+</button></h2>
+			<p class="details">
+			Here are all the gifts ideas for <span>PERSON</span> for all occasions.
+			</p>
+			<ul data-role="listview">
+                  <li data-ref="1">List Item 1</li>
+                  <li data-ref="2">List Item 2</li>
+                  <li data-ref="3">List Item 3</li>
+                  <li data-ref="4">List Item 4</li>
+                  <li data-ref="5">List Item 5</li>
+                  <li data-ref="6">List Item 6</li>
+				<!--
+				list of items to be dynamically added
+				single-tap gift idea to toggle purchased state for gift
+ 				double-tap gift idea to remove from list
+				-->
+			</ul>
+		</section>
+<!--*********************************** Gifts for occaision ***********************************-->
+		<section data-role="page" id="gifts-for-occasion">
+			<h2>Gift Ideas <button class="btnAdd">+</button></h2>
+			<p class="details">
+			Here are all the gift ideas for <span>OCCASION</span> for all people.
+			</p>
+			<ul data-role="listview">
+                  <li data-ref="1">List Item 1</li>
+                  <li data-ref="2">List Item 2</li>
+                  <li data-ref="3">List Item 3</li>
+                  <li data-ref="4">List Item 4</li>
+                  <li data-ref="5">List Item 5</li>
+                  <li data-ref="6">List Item 6</li>
+				<!--
+				list of items to be dynamically added
+				single-tap gift idea to toggle purchased state for gift
+				double-tap gift idea to remove from list
+				-->
+			</ul>
+		</section>
+	</div>
+<!--************************************** Overlay **************************************-->
+	<div data-role="overlay">&nbsp;</div>
+<!--************************************ New Person Modal ************************************-->
+	<div data-role="modal" id="add-person">
+		<h3>person</h3>
+		<form>
+			<div class="formBox">
+				<input type="text" id="new-per-occ" value="" placeholder="" class=""/>
+			</div>
+			<div class="formBox">
+				<input type="button" class="btnCancel" value="CANCEL" />
+				<input type="button" class="btnSave" value="SAVE" />
+			</div>
+		</form>
+	</div>
+<!--************************************ New occaision Modal ************************************-->
+    <div data-role="modal" id="add-occasion">
+            <h3>occasion</h3>
+            <form>
+                <div class="formBox">
+                    <input type="text" id="new-per-occ" value="" placeholder="" class=""/>
+                </div>
+                <div class="formBox">
+                    <input type="button" class="btnCancel" value="CANCEL" />
+                    <input type="button" class="btnSave" value="SAVE" />
+                </div>
+            </form>
         </div>
-        <script type="text/javascript" src="cordova.js"></script>
-        <script type="text/javascript" src="js/index.js"></script>
-    </body>
+<!--********************************* New gift Modal for person ******************************-->
+	<div data-role="modal" id="add-gift-person">
+		<h3>new gift for person</h3>
+		<form>
+			<div class="formBox">
+				<select id="list-per-occ">
+					<option value="0">Choose one</option>
+					<!-- list of options built from person list or occasion list -->
+				</select>
+			</div>
+			<div class="formBox">
+				<input type="text" id="new-idea" value="" placeholder="" class=""/>
+			</div>
+			<div class="formBox">
+				<input type="button" class="btnCancel" value="CANCEL" />
+				<input type="button" class="btnSave" value="SAVE" />
+			</div>
+        </form>
+	</div>
+<!--****************************** New gift Modal for occaision ******************************-->
+    <div data-role="modal" id="add-gift-occaision">
+		<h3>new gift for occaision</h3>
+		<form>
+			<div class="formBox">
+				<select id="list-per-person">
+					<option value="0">Choose one</option>
+					<!-- list of options built from person list or occasion list -->
+				</select>
+			</div>
+			<div class="formBox">
+				<input type="text" id="new-idea" value="" placeholder="" class=""/>
+			</div>
+			<div class="formBox">
+				<input type="button" class="btnCancel" value="CANCEL" />
+				<input type="button" class="btnSave" value="SAVE" />
+			</div>
+        </form>
+	</div>
+     <script src="js/hammer.min.js"></script>
+    <script src="js/script.js"></script>
+
+</body>
 </html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>FB79E2D1-2AF1-4AF8-922A-B287C02960CB</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Giftr</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>5150006340834A8D91A0363E0A740BB94F87D11B</key>
+		<string>https://github.com/gere0018/Giftr.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>platforms/ios/Giftr.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>5150006340834A8D91A0363E0A740BB94F87D11B</key>
+		<string>../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/gere0018/Giftr.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>5150006340834A8D91A0363E0A740BB94F87D11B</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>5150006340834A8D91A0363E0A740BB94F87D11B</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Giftr</string>
+		</dict>
+	</array>
+</dict>
+</plist>
