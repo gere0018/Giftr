@@ -41,31 +41,59 @@ var gere0018_Giftr= {
         hammerPeople.on("swipeleft", gere0018_Giftr.changePage);
         var hammerOccaision = new Hammer(gere0018_Giftr.occasionPage);
         hammerOccaision.on("swiperight", gere0018_Giftr.changePage  );
+//
+//        var myElement = document.getElementById('myElement');
+//
+//// We create a manager object, which is the same as Hammer(), but without the presetted recognizers.
+//var mc = new Hammer.Manager(myElement);
+//
+//
+//// Tap recognizer with minimal 2 taps
+//mc.add( new Hammer.Tap({ event: 'doubletap', taps: 2 }) );
+//// Single tap recognizer
+//mc.add( new Hammer.Tap({ event: 'singletap' }) );
+//
+//
+//// we want to recognize this simulatenous, so a quadrupletap will be detected even while a tap has been recognized.
+//mc.get('doubletap').recognizeWith('singletap');
+//// we only want to trigger a tap, when we don't have detected a doubletap
+//mc.get('singletap').requireFailure('doubletap');
+//
+//
+//mc.on("singletap doubletap", function(ev) {
+//    myElement.textContent += ev.type +" ";
+//});
+//
 
-        //hammer litener for tap and double tap on UL
+
+        //hammer litener for tap and double tap on UL for People page
         var peopleListview = document.querySelector("#peopleListview");
-        var occasionListview = document.querySelector("#occasionListview");
-        hammerOccaision.on("singletap", gere0018_Giftr.openManageGiftPage);
-        hammerOccaision.on("doubletap", gere0018_Giftr.deleteItem);
         var hammerPeopleListview = new Hammer.Manager(peopleListview);
-        var hammerOccasionListview = new Hammer.Manager(occasionListview);
-        var singleTap = new Hammer.Tap({ event: 'singletap' })
-        var doubleTap = new Hammer.Tap({ event: 'doubletap', taps: 2 })
+        var singleTap = new Hammer.Tap({ event: 'singletap' });
+        var doubleTap = new Hammer.Tap({event: 'doubletap', taps: 2 });
         hammerPeopleListview.add([doubleTap, singleTap]);
-        hammerOccasionListview.add([doubleTap, singleTap]);
         doubleTap.recognizeWith(singleTap);
-        singleTap.requireFailure([doubleTap]);
-
+        singleTap.requireFailure(doubleTap);
         hammerPeopleListview.on("singletap", gere0018_Giftr.openGiftsForPerson);
         hammerPeopleListview.on("doubletap", gere0018_Giftr.deleteItem);
+
+        //hammer litener for tap and double tap on UL for occasion page
+        var occasionListview = document.querySelector("#occasionListview");
+        var hammerOccasionListview = new Hammer.Manager(occasionListview);
+        var singleTap1 = new Hammer.Tap({ event: 'singletap' });
+        var doubleTap1 = new Hammer.Tap({event: 'doubletap', taps: 2 });
+        hammerOccasionListview.add([doubleTap1, singleTap1]);
+        doubleTap1.recognizeWith(singleTap1);
+        singleTap1.requireFailure(doubleTap1);
         hammerOccasionListview.on("singletap", gere0018_Giftr.openGiftsForOccasion);
         hammerOccasionListview.on("doubletap", gere0018_Giftr.deleteItem);
 
         //hammer listener for the add btn
         var addPerson = document.querySelector("#addPerson");
-        var addOccasion = document.querySelector("#addOccasion");
         var hammerAddPerson = new Hammer(addPerson);
         hammerAddPerson.on('tap', gere0018_Giftr.addPerson);
+
+        var addOccasion = document.querySelector("#addOccasion");
         var hammerAddOccasion = new Hammer(addOccasion);
         hammerAddOccasion.on('tap', gere0018_Giftr.addOccasion);
 
@@ -74,7 +102,7 @@ var gere0018_Giftr= {
         var hammerCancel = new Hammer(gere0018_Giftr.btnCancel[i]);
         hammerCancel.on('tap', gere0018_Giftr.cancelAdd);
         }
-
+        //add listener to the back btn in pages
         for(var i=0;i<gere0018_Giftr.btnBack.length;i++){
         var hammerBtnBack = new Hammer(gere0018_Giftr.btnBack[i]);
         hammerBtnBack.on('tap', gere0018_Giftr.browserBackButton);
@@ -110,6 +138,7 @@ var gere0018_Giftr= {
 
     },
     openGiftsForOccasion:function(){
+        console.log("gift for occasion");
         var giftsForOccasion = document.querySelector("#add-gift-occasion");
         giftsForOccasion.classList.add("activePage");
         //register state in history to allow backbtn to function
