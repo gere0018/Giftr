@@ -41,30 +41,6 @@ var gere0018_Giftr= {
         hammerPeople.on("swipeleft", gere0018_Giftr.changePage);
         var hammerOccaision = new Hammer(gere0018_Giftr.occasionPage);
         hammerOccaision.on("swiperight", gere0018_Giftr.changePage  );
-//
-//        var myElement = document.getElementById('myElement');
-//
-//// We create a manager object, which is the same as Hammer(), but without the presetted recognizers.
-//var mc = new Hammer.Manager(myElement);
-//
-//
-//// Tap recognizer with minimal 2 taps
-//mc.add( new Hammer.Tap({ event: 'doubletap', taps: 2 }) );
-//// Single tap recognizer
-//mc.add( new Hammer.Tap({ event: 'singletap' }) );
-//
-//
-//// we want to recognize this simulatenous, so a quadrupletap will be detected even while a tap has been recognized.
-//mc.get('doubletap').recognizeWith('singletap');
-//// we only want to trigger a tap, when we don't have detected a doubletap
-//mc.get('singletap').requireFailure('doubletap');
-//
-//
-//mc.on("singletap doubletap", function(ev) {
-//    myElement.textContent += ev.type +" ";
-//});
-//
-
 
         //hammer litener for tap and double tap on UL for People page
         var peopleListview = document.querySelector("#peopleListview");
@@ -74,7 +50,7 @@ var gere0018_Giftr= {
         hammerPeopleListview.add([doubleTap, singleTap]);
         doubleTap.recognizeWith(singleTap);
         singleTap.requireFailure(doubleTap);
-        hammerPeopleListview.on("singletap", gere0018_Giftr.openGiftsForPerson);
+        hammerPeopleListview.on("singletap", gere0018_Giftr.openGifts);
         hammerPeopleListview.on("doubletap", gere0018_Giftr.deleteItem);
 
         //hammer litener for tap and double tap on UL for occasion page
@@ -85,10 +61,10 @@ var gere0018_Giftr= {
         hammerOccasionListview.add([doubleTap1, singleTap1]);
         doubleTap1.recognizeWith(singleTap1);
         singleTap1.requireFailure(doubleTap1);
-        hammerOccasionListview.on("singletap", gere0018_Giftr.openGiftsForOccasion);
+        hammerOccasionListview.on("singletap", gere0018_Giftr.openGifts);
         hammerOccasionListview.on("doubletap", gere0018_Giftr.deleteItem);
 
-        //hammer listener for the add btn
+        //hammer listener for the add btns
         var addPerson = document.querySelector("#addPerson");
         var hammerAddPerson = new Hammer(addPerson);
         hammerAddPerson.on('tap', gere0018_Giftr.addPerson);
@@ -96,6 +72,14 @@ var gere0018_Giftr= {
         var addOccasion = document.querySelector("#addOccasion");
         var hammerAddOccasion = new Hammer(addOccasion);
         hammerAddOccasion.on('tap', gere0018_Giftr.addOccasion);
+
+        var addGiftPerPerson = document.querySelector("#addGiftPerPerson");
+        var hammerAddGiftPerPerson = new Hammer(addGiftPerPerson);
+        hammerAddGiftPerPerson.on('tap', gere0018_Giftr.addGiftPerPerson);
+
+        var  addGiftPerOccasion = document.querySelector("#addGiftPerOccasion");
+        var hammerAddGiftPerOccasion = new Hammer(addGiftPerOccasion);
+        hammerAddGiftPerOccasion.on('tap', gere0018_Giftr.addGiftPerOccasion);
 
         //add listener to the cancel btn in all modals
         for(var i=0;i<gere0018_Giftr.btnCancel.length;i++){
@@ -113,39 +97,63 @@ var gere0018_Giftr= {
     changePage: function(ev){
         console.log("changePage");
         if(ev.target.id == "people-list"){
-            gere0018_Giftr.occasionPage.classList.add("activePage");
-            gere0018_Giftr.peoplePage.classList.remove("activePage");
-            console.log("people-list");
+            gere0018_Giftr.occasionPage.className = "activePage pt-page-moveFromRight";
+            gere0018_Giftr.peoplePage.classList.add("pt-page-moveToLeft");
+            setTimeout(function(){
+            gere0018_Giftr.peoplePage.className = "";
+            gere0018_Giftr.occasionPage.className = "activePage";
+            }, 600);
         }else{
-             gere0018_Giftr.peoplePage.classList.add("activePage");
-             gere0018_Giftr.occasionPage.classList.remove("activePage");
-            console.log("occaision");
+            //if we are on occasion page
+            gere0018_Giftr.peoplePage.className = "activePage pt-page-moveFromLeft";
+            gere0018_Giftr.occasionPage.classList.add("pt-page-moveToRight");
+            setTimeout(function(){
+            gere0018_Giftr.occasionPage.className = "";
+            gere0018_Giftr.peoplePage.className = "activePage";
+            }, 600);
+            console.log("occasion");
         }
 
     },
-    openGiftsForPerson:function(ev){
-        console.log("openGiftPage");
-        var giftsForPerson = document.querySelector("#gifts-for-person");
-        giftsForPerson.classList.add("activePage");
-        //register state in history to allow backbtn to function
-        history.pushState(null, null, "#gifts-for-person");
-
-        //add listener to the add btn
-        var addGiftPerPerson = document.querySelector("#addGiftPerPerson");
-        var hammerAddGiftPerPerson = new Hammer(addGiftPerPerson);
-        hammerAddGiftPerPerson.on('tap', gere0018_Giftr.addGiftPerPerson);
+    openGifts:function(ev){
+        if(ev.target.id == "people-list"){
+            var giftsForPerson = document.querySelector("#gifts-for-person");
+            giftsForPerson.className = "activePage pt-page-moveFromRight";
+            gere0018_Giftr.peoplePage.classList.add("pt-page-moveToLeft");
+            setTimeout(function(){
+            gere0018_Giftr.peoplePage.className = "";
+            giftsForPerson.className = "activePage";
+            }, 600);
+        }else{
+            //if we are on occasion page
+            var giftsForOccasion = document.querySelector("#gifts-for-occasion");
+            giftsForOccasion.className = "activePage pt-page-moveFromBottom";
+            gere0018_Giftr.occasionPage.classList.add("pt-page-moveToTop");
+            setTimeout(function(){
+            gere0018_Giftr.occasionPage.className = "";
+            giftsForOccasion.className = "activePage";
+            }, 600);
+        }
 
 
     },
-    openGiftsForOccasion:function(){
-        console.log("gift for occasion");
-        var giftsForOccasion = document.querySelector("#add-gift-occasion");
-        giftsForOccasion.classList.add("activePage");
-        //register state in history to allow backbtn to function
-        history.pushState(null, null, "#add-gift-occasion");
-
-
-    },
+//    openGiftsForPerson:function(ev){
+//        console.log("openGiftPage");
+//        var giftsForPerson = document.querySelector("#gifts-for-person");
+//        giftsForPerson.classList.add("activePage");
+//        //register state in history to allow backbtn to function
+//        history.pushState(null, null, "#gifts-for-person");
+//
+//
+//    },
+//    openGiftsForOccasion:function(){
+//        console.log("gift for occasion");
+//        var giftsForOccasion = document.querySelector("#gifts-for-occasion");
+//        giftsForOccasion.classList.add("activePage");
+//        //register state in history to allow backbtn to function
+//        history.pushState(null, null, "#add-gift-occasion");
+//
+//    },
 
     deleteItem: function(ev){
         console.log("delete item");
@@ -162,7 +170,6 @@ var gere0018_Giftr= {
         //add hammer listeners to save btns
        // var cancelPerson = document.querySelector("#cancelPerson");
         var savePerson = document.querySelector("#savePerson");
-
         var hammerSave = new Hammer(savePerson);
         hammerSave.on('tap', gere0018_Giftr.saveAddedItem);
     },
@@ -173,9 +180,7 @@ var gere0018_Giftr= {
         var addOccasionModal = document.querySelector("#add-occasion");
         addOccasionModal.style.display = "block";
         //add hammer listeners to save and cancel btns
-        //var cancelOccasion = document.querySelector("#cancelOccasion");
         var saveOccasion = document.querySelector("#saveOccasion");
-
         var hammerSave = new Hammer(saveOccasion);
         hammerSave.on('tap', gere0018_Giftr.saveAddedItem);
     },
@@ -211,6 +216,15 @@ var gere0018_Giftr= {
         var hammerSave = new Hammer(saveOccasion);
         hammerSave.on('tap', gere0018_Giftr.saveAddedItem);
     },
+     addGiftPerOccasion:function(){
+         console.log("add gift per occasion");
+        gere0018_Giftr.overlay.style.display = "block";
+        var giftPerOccasionModal = document.querySelector("#add-gift-occasion");
+        giftPerOccasionModal.style.display = "block";
+
+
+
+     }
 
 
 
