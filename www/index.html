@@ -156,7 +156,7 @@
 			<p class="details">
 			Here are all the gifts ideas for <span>PERSON</span> for all occasions.
 			</p>
-			<ul data-role="listview">
+			<ul data-role="listview" id = "giftForPersonListview">
                   <li data-ref="1">List Item 1</li>
                   <li data-ref="2">List Item 2</li>
                   <li data-ref="3">List Item 3</li>
@@ -203,7 +203,7 @@
 			<p class="details">
 			Here are all the gift ideas for <span>OCCASION</span> for all people.
 			</p>
-			<ul data-role="listview">
+			<ul data-role="listview" id = "giftForOccasionListview">
                   <li data-ref="1">List Item 1</li>
                   <li data-ref="2">List Item 2</li>
                   <li data-ref="3">List Item 3</li>
@@ -225,7 +225,7 @@
 		<h3>person</h3>
 		<form>
 			<div class="formBox">
-				<input type="text" id="new-per-occ" value="" placeholder="" class=""/>
+				<input type="text" id="new-per" value="" placeholder="" class=""/>
 			</div>
 			<div class="formBox">
 				<input type="button"  class="btnCancel" id = "cancelPerson" value="CANCEL" />
@@ -238,7 +238,7 @@
             <h3>occasion</h3>
             <form>
                 <div class="formBox">
-                    <input type="text" id="new-per-occ" value="" placeholder="" class=""/>
+                    <input type="text" id="new-occ" value="" placeholder="" class=""/>
                 </div>
                 <div class="formBox">
                     <input type="button" class="btnCancel" id = "cancelOccasion" value="CANCEL" />
@@ -264,7 +264,7 @@
 			</div>
 			<div class="formBox">
 				<input type="button" class="btnCancel" value="CANCEL" />
-				<input type="button" class="btnSave" value="SAVE" />
+				<input type="button" class="btnSave" id = "saveGiftPerPerson" value="SAVE" />
 			</div>
         </form>
 	</div>
@@ -283,7 +283,7 @@
 			</div>
 			<div class="formBox">
 				<input type="button" class="btnCancel" value="CANCEL" />
-				<input type="button" class="btnSave" value="SAVE" />
+				<input type="button" class="btnSave" id="saveGiftPerOccasion" value="SAVE" />
 			</div>
         </form>
 	</div>

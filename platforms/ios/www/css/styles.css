@@ -30,6 +30,7 @@ p{
 .wrapper{
   width:100%;
   height:100%;
+
 }
 svg{
     display: inline-block;
@@ -61,14 +62,25 @@ svg#addOccasion.addBtn{
   top:0;
   left:0;
   width:100%;
-  display:none;
+  visibility: hidden;
   min-height:100%;
   color:#FFFFFF;
   background-color:#FF66A4;
   padding:1rem;
+  overflow: hidden;
+	-webkit-backface-visibility: hidden;
+	-moz-backface-visibility: hidden;
+	backface-visibility: hidden;
+	-webkit-transform: translate3d(0, 0, 0);
+	-moz-transform: translate3d(0, 0, 0);
+	transform: translate3d(0, 0, 0);
+	-webkit-transform-style: preserve-3d;
+	-moz-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+
 }
 [data-role="page"].activePage {
-            display: block;
+            visibility: visible;
             z-index:10;
 }
 

@@ -1,7 +1,8 @@
 
 var gere0018_Giftr= {
 	loadRequirements:0,
-    pages:"",
+    db:null,
+    version:'1.0',
     overlay:"",
     modal:"",
     btnCancel:"",
@@ -17,7 +18,7 @@ var gere0018_Giftr= {
 //	onDeviceReady: function(){
 //		gere0018_Giftr.loadRequirements++;
 //		if(gere0018_Giftr.loadRequirements === 2){
-//			gere0018_Giftr.start();
+//			gere0018_Giftr.execute();
 //		}
 //	},
 	onDomReady: function(){
@@ -27,13 +28,19 @@ var gere0018_Giftr= {
 //		}
 	},
 	execute: function(){
-        console.log("execute");
+        gere0018_Giftr.prepareDatabase();
+        gere0018_Giftr.prepareNavigation();
+    },
+    prepareNavigation: function(){
+        console.log("prepare Navigation");
         gere0018_Giftr.overlay = document.querySelector('[data-role = "overlay"]');
         gere0018_Giftr.modal = document.querySelectorAll('[data-role = "modal"]');
         gere0018_Giftr.btnCancel =  document.querySelectorAll(".btnCancel");
         gere0018_Giftr.peoplePage= document.querySelector("#people-list");
         gere0018_Giftr.occasionPage = document.querySelector("#occasion-list");
         gere0018_Giftr.btnBack = document.querySelectorAll(".backBtn");
+        gere0018_Giftr.peopleListview = document.querySelector("#peopleListview");
+        gere0018_Giftr.occasionListview = document.querySelector("#occasionListview");
 
         //add hammer Listeners ******************************************************
         //hammer litener for swipe event on both pages
@@ -43,8 +50,7 @@ var gere0018_Giftr= {
         hammerOccaision.on("swiperight", gere0018_Giftr.changePage  );
 
         //hammer litener for tap and double tap on UL for People page
-        var peopleListview = document.querySelector("#peopleListview");
-        var hammerPeopleListview = new Hammer.Manager(peopleListview);
+        var hammerPeopleListview = new Hammer.Manager(gere0018_Giftr.peopleListview);
         var singleTap = new Hammer.Tap({ event: 'singletap' });
         var doubleTap = new Hammer.Tap({event: 'doubletap', taps: 2 });
         hammerPeopleListview.add([doubleTap, singleTap]);
@@ -54,8 +60,8 @@ var gere0018_Giftr= {
         hammerPeopleListview.on("doubletap", gere0018_Giftr.deleteItem);
 
         //hammer litener for tap and double tap on UL for occasion page
-        var occasionListview = document.querySelector("#occasionListview");
-        var hammerOccasionListview = new Hammer.Manager(occasionListview);
+
+        var hammerOccasionListview = new Hammer.Manager(gere0018_Giftr.occasionListview);
         var singleTap1 = new Hammer.Tap({ event: 'singletap' });
         var doubleTap1 = new Hammer.Tap({event: 'doubletap', taps: 2 });
         hammerOccasionListview.add([doubleTap1, singleTap1]);
@@ -64,7 +70,7 @@ var gere0018_Giftr= {
         hammerOccasionListview.on("singletap", gere0018_Giftr.openGifts);
         hammerOccasionListview.on("doubletap", gere0018_Giftr.deleteItem);
 
-        //hammer listener for the add btns
+        //hammer listener for the add buttons
         var addPerson = document.querySelector("#addPerson");
         var hammerAddPerson = new Hammer(addPerson);
         hammerAddPerson.on('tap', gere0018_Giftr.addPerson);
@@ -94,6 +100,85 @@ var gere0018_Giftr= {
         //add listener to hardware's back button*****************************************
         //window.addEventListener("popstate", gere0018_Giftr.browserBackButton, false);
 	},
+    prepareDatabase:function(){
+        // Open a database *********************
+        gere0018_Giftr.db = window.openDatabase("Giftr_DB", "1.0", "Giftr", 1024000);
+        //Create  db tables ********************
+         gere0018_Giftr.db.transaction( gere0018_Giftr.doTrans, gere0018_Giftr.errFunc,gere0018_Giftr.successFunc );
+    },
+    doTrans:function(trans){
+        trans.executeSql('CREATE TABLE IF NOT EXISTS people(person_id INTEGER PRIMARY KEY AUTOINCREMENT, person_name TEXT)' );
+        trans.executeSql('CREATE TABLE IF NOT EXISTS occasions(occ_id INTEGER PRIMARY KEY AUTOINCREMENT, occ_name TEXT)' );
+        trans.executeSql('CREATE TABLE IF NOT EXISTS gifts(gift_id INTEGER PRIMARY KEY AUTOINCREMENT, person_id INTEGER, occ_id INTEGER, gift_idea TEXT, purchased INTEGER)' );
+       // trans.executeSql('INSERT INTO people(person_id, person_name) VALUES(1, "Cheese")');
+        //trans.executeSql('DROP TABLE people');
+
+        //If there are people in database, display them in people list
+        //************************************************************
+        trans.executeSql( "SELECT * FROM people", [ ], querySuccess1);
+        function querySuccess1( trans, results){
+            console.log( results.rows.length );
+            var len = results.rows.length;
+            if(len !== 0){
+                for( var i=0; i<len; i++){
+                    console.log( results.rows.item(i).person_name );
+                    gere0018_Giftr.peopleListview.innerHTML += '<li>' + results.rows.item(i).person_name + '</li>';
+                }
+
+
+            }
+        }
+        //If there are occasions in database, display them in occasion list
+        //******************************************************************
+        trans.executeSql( "SELECT * FROM occasions", [ ], querySuccess2, errQuery2);
+        function querySuccess2( trans, results){
+            console.log( results.rows.length );
+            var len = results.rows.length;
+            if(len !== 0){
+                for( var i=0; i<len; i++){
+                    console.log( results.rows.item(i).occ_name);
+                    gere0018_Giftr.occasionListview.innerHTML += '<li>' + results.rows.item(i).person_name + '</li>';
+                }
+
+
+            }
+        }
+        function errQuery2(){
+            console.log("err in Query2");
+        }
+
+        //If there are gifts in database, display them in gift lists
+        //***********************************************************
+        trans.executeSql( "SELECT * FROM gifts AS g INNER JOIN people AS p ON g.person_id = p.person_id INNER JOIN occasions AS o ON g.occ_id = o.occ_id ", [ ], querySuccess3, errQuery3);
+        function querySuccess3( trans, results){
+            console.log( results.rows.length );
+            var len = results.rows.length;
+            var giftForPersonListview = document.querySelector("#giftForPersonListview");
+            var giftForOccasionListview = document.querySelector("#giftForOccasionListview");
+
+            if(len !== 0){
+                for( var i=0; i<len; i++){
+                    console.log( results.rows.item(i).person_name );
+                    giftForPersonListview.innerHTML += '<li>' + results.rows.item(i).gift_idea +
+                        results.rows.item(i).occ_name +'</li>';
+                    giftForOccasionListview.innerHTML += '<li>' + results.rows.item(i).gift_idea +
+                        results.rows.item(i).person_name +'</li>';
+                }
+
+            }
+        }
+        function errQuery3(){
+            console.log("err in Query3");
+        }
+
+
+    },
+    successFunc:function(){
+        console.log("transaction success");
+    },
+    errFunc:function(){
+        console.log("transaction failure");
+    },
     changePage: function(ev){
         console.log("changePage");
         if(ev.target.id == "people-list"){
@@ -137,29 +222,9 @@ var gere0018_Giftr= {
 
 
     },
-//    openGiftsForPerson:function(ev){
-//        console.log("openGiftPage");
-//        var giftsForPerson = document.querySelector("#gifts-for-person");
-//        giftsForPerson.classList.add("activePage");
-//        //register state in history to allow backbtn to function
-//        history.pushState(null, null, "#gifts-for-person");
-//
-//
-//    },
-//    openGiftsForOccasion:function(){
-//        console.log("gift for occasion");
-//        var giftsForOccasion = document.querySelector("#gifts-for-occasion");
-//        giftsForOccasion.classList.add("activePage");
-//        //register state in history to allow backbtn to function
-//        history.pushState(null, null, "#add-gift-occasion");
-//
-//    },
-
     deleteItem: function(ev){
         console.log("delete item");
         console.log(ev.target);
-
-
     },
     addPerson:function(){
         console.log("add person");
@@ -168,7 +233,6 @@ var gere0018_Giftr= {
         gere0018_Giftr.overlay.style.display = "block";
         addPersonModal.style.display = "block";
         //add hammer listeners to save btns
-       // var cancelPerson = document.querySelector("#cancelPerson");
         var savePerson = document.querySelector("#savePerson");
         var hammerSave = new Hammer(savePerson);
         hammerSave.on('tap', gere0018_Giftr.saveAddedItem);
@@ -192,8 +256,34 @@ var gere0018_Giftr= {
 
 
     },
-    saveAddedItem:function(){
+    saveAddedItem:function(ev){
       console.log("saving item to database");
+      //prevent form from submitting.
+      ev.preventDefault();
+      //save added item to the database
+
+      if(ev.target.id == "savePerson"){
+          console.log("inside save person");
+          var newPerson = document.querySelector("#new-per").value;
+          if(newPerson){
+              console.log("inserting");
+                //save the value in the people table
+                gere0018_Giftr.db.transaction(function(trans){
+                    trans.executeSql('INSERT INTO people(person_name) VALUES("' + newPerson+ '")');
+                      gere0018_Giftr.peopleListview.innerHTML += '<li>' + newPerson + '</li>';
+
+                });
+            }
+
+
+
+
+
+      }
+
+      //display added item in the listview
+
+      //remove modal and overlay
       gere0018_Giftr.overlay.style.display = "none";
       for(var i=0;i<gere0018_Giftr.modal.length;i++){
           gere0018_Giftr.modal[i].style.display = "none";
@@ -212,8 +302,8 @@ var gere0018_Giftr= {
         var giftPerPersonModal = document.querySelector("#add-gift-person");
         giftPerPersonModal.style.display = "block";
         //add hammer listeners to save btns
-        var saveOccasion = document.querySelector("#saveOccasion");
-        var hammerSave = new Hammer(saveOccasion);
+        var saveGiftPerPerson = document.querySelector("#saveGiftPerPerson");
+        var hammerSave = new Hammer(saveGiftPerPerson);
         hammerSave.on('tap', gere0018_Giftr.saveAddedItem);
     },
      addGiftPerOccasion:function(){
@@ -221,6 +311,10 @@ var gere0018_Giftr= {
         gere0018_Giftr.overlay.style.display = "block";
         var giftPerOccasionModal = document.querySelector("#add-gift-occasion");
         giftPerOccasionModal.style.display = "block";
+         //add hammer listeners to save btns
+        var saveGiftPerOccasion = document.querySelector("#saveGiftPerOccasion");
+        var hammerSave = new Hammer(saveGiftPerOccasion);
+        hammerSave.on('tap', gere0018_Giftr.saveAddedItem);
 
 
 
