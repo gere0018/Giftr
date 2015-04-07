@@ -8,10 +8,14 @@ var gere0018_Giftr= {
     btnSave:"",
     btnCancel:"",
     btnBack:"",
+    personName:"",
+    occasionName:"",
     peoplePage:"",
     occasionPage:"",
     peopleListview:"",
     occasionListview:"",
+    giftForPersonListview:"",
+    giftForOccasionListview:"",
 	init: function(){
 		//document.addEventListener("deviceready",gere0018_Giftr.onDeviceReady);
 		document.addEventListener("DOMContentLoaded", gere0018_Giftr.onDomReady);
@@ -43,6 +47,8 @@ var gere0018_Giftr= {
         gere0018_Giftr.btnBack = document.querySelectorAll(".backBtn");
         gere0018_Giftr.peopleListview = document.querySelector("#peopleListview");
         gere0018_Giftr.occasionListview = document.querySelector("#occasionListview");
+        gere0018_Giftr.giftForPersonListview = document.querySelector("#giftForPersonListview");
+        gere0018_Giftr.giftForOccasionListview = document.querySelector("#giftForOccasionListview");
 
         //add hammer Listeners ******************************************************
         //hammer litener for swipe event on both pages
@@ -108,15 +114,22 @@ var gere0018_Giftr= {
     prepareDatabase:function(){
          // Open a database *********************
          gere0018_Giftr.db = window.openDatabase("Giftr_DB", "1.0", "Giftr", 1024000);
-         //Create  db tables ********************
-         gere0018_Giftr.db.transaction( gere0018_Giftr.doTrans, gere0018_Giftr.errFunc,gere0018_Giftr.successFunc );
+         if(gere0018_Giftr.db.version == ''){
+            console.info('First time running... create tables');
+            //increment the version and create the tables
+            gere0018_Giftr.db.changeVersion('', '1.0');
+         }else{
+             gere0018_Giftr.db.transaction( gere0018_Giftr.doTrans,
+                                          gere0018_Giftr.errFunc,
+                                          gere0018_Giftr.successFunc );
+         }
     },
     doTrans:function(trans){
         trans.executeSql('CREATE TABLE IF NOT EXISTS people(person_id INTEGER PRIMARY KEY AUTOINCREMENT, person_name TEXT)' );
         trans.executeSql('CREATE TABLE IF NOT EXISTS occasions(occ_id INTEGER PRIMARY KEY AUTOINCREMENT, occ_name TEXT)' );
         trans.executeSql('CREATE TABLE IF NOT EXISTS gifts(gift_id INTEGER PRIMARY KEY AUTOINCREMENT, person_id INTEGER, occ_id INTEGER, gift_idea TEXT, purchased INTEGER)' );
-       //trans.executeSql('INSERT INTO occasions(occ_id, occ_name) VALUES(1, "Halloween")');
-        //trans.executeSql('DROP TABLE people');
+//        trans.executeSql('DELETE FROM sqlite_sequence WHERE name = "people"');
+//        trans.executeSql('DROP TABLE people');
 
         //If there are people in database, display them in people list
         //************************************************************
@@ -127,9 +140,9 @@ var gere0018_Giftr= {
             if(len !== 0){
                 for( var i=0; i<len; i++){
                     console.log( results.rows.item(i).person_name );
-                    gere0018_Giftr.peopleListview.innerHTML += '<li>' + results.rows.item(i).person_name + '</li>';
+                    gere0018_Giftr.peopleListview.innerHTML += '<li>' +
+                        results.rows.item(i).person_name + '</li>';
                 }
-
 
             }
         }
@@ -151,32 +164,6 @@ var gere0018_Giftr= {
         function errQuery2(){
             console.log("err in Query2");
         }
-
-        //If there are gifts in database, display them in gift lists
-        //***********************************************************
-        trans.executeSql( "SELECT * FROM gifts AS g INNER JOIN people AS p ON g.person_id = p.person_id INNER JOIN occasions AS o ON g.occ_id = o.occ_id ", [ ], querySuccess3, errQuery3);
-        function querySuccess3( trans, results){
-            console.log( results.rows.length );
-            var len = results.rows.length;
-            var giftForPersonListview = document.querySelector("#giftForPersonListview");
-            var giftForOccasionListview = document.querySelector("#giftForOccasionListview");
-
-            if(len !== 0){
-                for( var i=0; i<len; i++){
-                    console.log( results.rows.item(i).person_name );
-                    giftForPersonListview.innerHTML += '<li>' + results.rows.item(i).gift_idea +
-                        results.rows.item(i).occ_name +'</li>';
-                    giftForOccasionListview.innerHTML += '<li>' + results.rows.item(i).gift_idea +
-                        results.rows.item(i).person_name +'</li>';
-                }
-
-            }
-        }
-        function errQuery3(){
-            console.log("err in Query3");
-        }
-
-
     },
     successFunc:function(){
         console.log("transaction success");
@@ -206,19 +193,82 @@ var gere0018_Giftr= {
 
     },
     openGifts:function(ev){
-        if(ev.target.id == "people-list"){
+        //console.log(ev.target.parentElement.id);
+        if(ev.target.parentElement.id == "peopleListview"){
+            console.log(ev.target.innerHTML);
+            gere0018_Giftr.personName = ev.target.innerHTML;
             var giftsForPerson = document.querySelector("#gifts-for-person");
+            var H2 = document.querySelector("#gifts-for-person h2");
+            H2.innerHTML = "Gifts for "+ gere0018_Giftr.personName;
             giftsForPerson.className = "activePage pt-page-moveFromBottom";
             setTimeout(function(){
             giftsForPerson.className = "activePage";
             }, 600);
+
+            //INNER JOIN
+            //people AS p ON g.person_id = p.person_i
+            gere0018_Giftr.db.transaction(function(trans){
+                trans.executeSql( "SELECT g.gift_idea, o.occ_name FROM gifts AS g INNER JOIN occasions As o ON g.occ_id = o.occ_id ", [ ], querySuccess3, errQuery3);
+                function querySuccess3( trans, results){
+                    var len = results.rows.length;
+                    console.log(len);
+                    if(len !== 0){
+                        for( var i=0; i<len; i++){
+                            console.log( "updating gift for person and gift for occasion list view" );
+                            gere0018_Giftr.giftForPersonListview.innerHTML += '<li>' +
+                                results.rows.item(i).gift_idea + ' - ' + results.rows.item(i).occ_name
+                                +'</li>';
+//                            gere0018_Giftr.giftForOccasionListview.innerHTML += '<li>' +
+//                                results.rows.item(i).gift_idea + ' - ' +
+//                                results.rows.item(i).person_name +'</li>';
+                        }
+
+                    }
+                }
+                function errQuery3(){
+                    console.log("err in Query3");
+                }
+            });
+
+
+
+
         }else{
-            //if we are on occasion page
+            //if user is on occasion page *******************************
+            console.log(ev.target.innerHTML);
+            gere0018_Giftr.occasionName = ev.target.innerHTML;
             var giftsForOccasion = document.querySelector("#gifts-for-occasion");
+            var H2 = document.querySelector("#gifts-for-occasion h2");
+            H2.innerHTML = "Gifts for "+ gere0018_Giftr.occasionName;
             giftsForOccasion.className = "activePage pt-page-moveFromBottom";
             setTimeout(function(){
             giftsForOccasion.className = "activePage";
             }, 600);
+
+            //If there are gifts in database, display them in gift lists
+            //***********************************************************
+            gere0018_Giftr.db.transaction(function(trans){
+                trans.executeSql( "SELECT * FROM gifts AS g INNER JOIN people AS p ON g.person_id = p.person_id INNER JOIN occasions AS o ON g.occ_id = o.occ_id ", [ ], querySuccess3, errQuery3);
+                function querySuccess3( trans, results){
+                    console.log( results.rows.length );
+                    var len = results.rows.length;
+                    if(len !== 0){
+                        for( var i=0; i<len; i++){
+                            console.log( results.rows.item(i).person_name );
+                            gere0018_Giftr.giftForPersonListview.innerHTML += '<li>' +
+                                results.rows.item(i).gift_idea + results.rows.item(i).occ_name
+                                +'</li>';
+                            gere0018_Giftr.giftForOccasionListview.innerHTML += '<li>' +
+                                results.rows.item(i).gift_idea + results.rows.item(i).person_name
+                                +'</li>';
+                        }
+
+                    }
+                }
+                function errQuery3(){
+                    console.log("err in Query3");
+                }
+            });
         }
 
 
@@ -229,6 +279,7 @@ var gere0018_Giftr= {
         console.log(currentItem);
         //update the database
         console.log(currentItem.innerHTML);
+
         //case 1 delete a person **********************************************
         if(ev.target.parentElement.id == "peopleListview"){
             gere0018_Giftr.db.transaction(function(trans){
@@ -236,6 +287,7 @@ var gere0018_Giftr= {
                                  currentItem.innerHTML + '"');
              });
         }
+
         //case 2 delete an Occasion **********************************************
         if(ev.target.parentElement.id == "occasionListview"){
             gere0018_Giftr.db.transaction(function(trans){
@@ -245,16 +297,13 @@ var gere0018_Giftr= {
         }
         //remove the item from the list
         currentItem.parentElement.removeChild(currentItem);
-
-
     },
     addPerson:function(){
-        //console.log("add person");
-        //display overlay and modal to add item
+        var newPerson = document.querySelector("#new-per").value;
+        newPerson = "";
         var addPersonModal = document.querySelector("#add-person");
         gere0018_Giftr.overlay.style.display = "block";
         addPersonModal.style.display = "block";
-
     },
     addOccasion: function(){
         console.log("add occasion");
@@ -262,29 +311,56 @@ var gere0018_Giftr= {
         gere0018_Giftr.overlay.style.display = "block";
         var addOccasionModal = document.querySelector("#add-occasion");
         addOccasionModal.style.display = "block";
-//        //add hammer listeners to save and cancel btns
-//        var saveOccasion = document.querySelector("#saveOccasion");
-//        var hammerSave = new Hammer(saveOccasion);
-//        hammerSave.on('tap', gere0018_Giftr.saveAddedItem);
     },
     addGiftPerPerson:function(){
         gere0018_Giftr.overlay.style.display = "block";
         var giftPerPersonModal = document.querySelector("#add-gift-person");
+        var H3 = document.querySelector("#add-gift-person h3");
+        H3.innerHTML = "New gift for " +  gere0018_Giftr.personName;
         giftPerPersonModal.style.display = "block";
-//        //add hammer listeners to save btns
-//        var saveGiftPerPerson = document.querySelector("#saveGiftPerPerson");
-//        var hammerSave = new Hammer(saveGiftPerPerson);
-//        hammerSave.on('tap', gere0018_Giftr.saveAddedItem);
+
+        //add all occasions as options in the occasionList
+        //*************************************************
+        gere0018_Giftr.db.transaction(function(trans){
+              trans.executeSql('SELECT * FROM occasions', [ ], querySuccess);
+              function querySuccess( trans, results){
+                  var len = results.rows.length;
+                  if(len !== 0){
+                    var occasionList = document.querySelector("#list-per-occ");
+                      for( var i=0; i<len; i++){
+                            occasionList.innerHTML += '<option value = "'
+                                + results.rows.item(i).occ_name + '">' +
+                                  results.rows.item(i).occ_name +'</option>';
+                      }
+
+                  }
+              }
+          });
+
     },
      addGiftPerOccasion:function(){
-         console.log("add gift per occasion");
         gere0018_Giftr.overlay.style.display = "block";
         var giftPerOccasionModal = document.querySelector("#add-gift-occasion");
+        var H3 = document.querySelector("#add-gift-occasion h3");
+        H3.innerHTML = "New gift for " +  gere0018_Giftr.occasionName;
         giftPerOccasionModal.style.display = "block";
-//         //add hammer listeners to save btns
-//        var saveGiftPerOccasion = document.querySelector("#saveGiftPerOccasion");
-//        var hammerSave = new Hammer(saveGiftPerOccasion);
-//        hammerSave.on('tap', gere0018_Giftr.saveAddedItem);
+
+         //add new person as an option in the people list
+        //***********************************************
+        gere0018_Giftr.db.transaction(function(trans){
+              trans.executeSql('SELECT * FROM people', [ ], querySuccess);
+              function querySuccess( trans, results){
+                  var len = results.rows.length;
+                  if(len !== 0){
+                       var peopleList = document.querySelector("#list-per-person");
+                       for( var i=0; i<len; i++){
+                            peopleList.innerHTML += '<option value = "' +
+                                results.rows.item(i).person_name + '">' +
+                                results.rows.item(i).person_name +'</option>';
+                          }
+                  }
+              }
+          });
 
      },
 
@@ -293,13 +369,9 @@ var gere0018_Giftr= {
       for(var i=0;i<gere0018_Giftr.modal.length;i++){
           gere0018_Giftr.modal[i].style.display = "none";
         }
-
-
     },
     saveAddedItem:function(ev){
-      console.log("saving item to database");
       ev.preventDefault(); //prevent form from submitting.
-      //save added item to the database
       //case 1 add a person **********************************************
       if(ev.target.id == "savePerson"){
           console.log("inside save person");
@@ -307,30 +379,82 @@ var gere0018_Giftr= {
           if(newPerson){
               console.log("inserting person");
                 //save the value in the people table
+               //***********************************
                 gere0018_Giftr.db.transaction(function(trans){
                     trans.executeSql('INSERT INTO people(person_name) VALUES("' + newPerson+ '")');
-                     //display added item in the listview
-                      gere0018_Giftr.peopleListview.innerHTML += '<li>' + newPerson + '</li>';
+
+                    //display added item in the listview
+                    //***********************************
+                    gere0018_Giftr.peopleListview.innerHTML += '<li>' + newPerson + '</li>';
 
                 });
             }
       }
-    //case 2 add an occasion **********************************************
-        if(ev.target.id == "saveOccasion"){
+      //case 2 add an occasion **********************************************
+      if(ev.target.id == "saveOccasion"){
           console.log("inside save occasion");
           var newOccasion = document.querySelector("#new-occ").value;
           if(newOccasion){
               console.log("inserting occasion");
                 //save the value in the occasions table
+                //**************************************
                 gere0018_Giftr.db.transaction(function(trans){
                     trans.executeSql('INSERT INTO occasions(occ_name) VALUES("' + newOccasion + '")');
-                     //display added item in the listview
-                      gere0018_Giftr.occasionListview.innerHTML += '<li>' + newOccasion + '</li>';
+
+                    //display added item in the listview
+                    //***********************************
+                    gere0018_Giftr.occasionListview.innerHTML += '<li>' + newOccasion + '</li>';
 
                 });
             }
       }
+     //case 3 add gift for person **********************************************
+         if(ev.target.id == "saveGiftPerPerson"){
+              var newIdea = document.querySelector("#new-idea").value;
+              if(newIdea){
+                  var personId;
+                  var occasionId;
+                  //get Id of occasion selected to insert it in gifts table
+                     //*********************************************************
+                      var occasionList = document.querySelector("#list-per-occ");
+                      var selectedOccasion = occasionList.value;
+                      var options = occasionList.querySelectorAll("option");
+                      for(var p=0; p<options.length; p++){
+                          if(options[p].selected == true){
+                            selectedOccasion = options[p].value;
+                          }
+                      }
+                      gere0018_Giftr.giftForPersonListview.innerHTML += '<li>'
+                                    + newIdea +'  -  '+ selectedOccasion +  '</li>';
 
+                  //get Id of person selected to insert it in gifts table
+                  //******************************************************
+                  gere0018_Giftr.db.transaction(function(trans){
+                      trans.executeSql('SELECT * FROM people WHERE person_name = "'
+                                         + gere0018_Giftr.personName + '"', [ ], querySuccess1);
+                      function querySuccess1( trans, results){
+                           personId = results.rows.item(0).person_id;
+                          trans.executeSql('INSERT INTO gifts (person_id, gift_idea) VALUES("'
+                                         + personId + '", "' + newIdea + '")');
+                      }
+                      trans.executeSql('SELECT * FROM occasions WHERE occ_name = "' +
+                                       selectedOccasion + '"', [ ], querySuccess2);
+                      function querySuccess2( trans, results){
+                           occasionId = results.rows.item(0).occ_id;
+                           trans.executeSql('INSERT INTO gifts (occ_id) VALUES("'
+                                          + occasionId + '") WHERE gift_idea = "' + newIdea + '"');
+
+                      }
+
+                      //add all info to the gift table
+                     //********************************
+//                      trans.executeSql('INSERT INTO gifts (person_id, occ_id, gift_idea) VALUES("'
+//                                         + personId +'", "' + occasionId + '", "' + newIdea + '")');
+
+                  });
+              }
+
+            }
       //remove modal and overlay
       gere0018_Giftr.overlay.style.display = "none";
       for(var i=0;i<gere0018_Giftr.modal.length;i++){
