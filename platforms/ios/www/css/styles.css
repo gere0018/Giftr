@@ -14,17 +14,21 @@ body{
 }
 header{
    background-color: #B0B0B0;
-    padding: 1rem;
+   padding: 1rem;
+    overflow: hidden;
 }
 h2{
   font-size:1.6rem;
-  font-family: "Baskerville ", "Cochin", serif;
-  overflow: hidden;
-  display: inline-block;
+  width: 50%;
+  float:left;
+}
+h3{
+    padding: 1rem 0;
+    font-size:1.6rem;
 }
 p{
-  font-size:1.0rem;
-  padding:1rem 0;
+  font-size:1.3rem;
+  padding:1rem;
   font-family: "Baskerville ", "Cochin", serif;
 }
 .wrapper{
@@ -32,21 +36,26 @@ p{
   height:100%;
 
 }
-svg, img{
-    display: inline-block;
-    width: 30px;
+svg {
+    width: 13%;
+    float: left;
     height: 30px;
-    margin-right: 13%;
+    margin-right: 4%;
+}
+img{
+    width: 13%;
+    float: left;
+    height: 30px;
+
 }
 
 .addBtn{
-    margin-right: 0;
-    margin-left: 20%;
+    float:right;
 }
 
 .backBtn{
     width: 28px;
-    margin-right: 5%;
+    margin-right: 3%;
 
 }
 svg#addOccasion.addBtn{
@@ -62,7 +71,7 @@ svg#addOccasion.addBtn{
   top:0;
   left:0;
   width:100%;
-  visibility: hidden;
+  display:none;
   min-height:100%;
   color:#FFFFFF;
   background-color:#FF66A4;
@@ -80,7 +89,7 @@ svg#addOccasion.addBtn{
 
 }
 [data-role="page"].activePage {
-            visibility: visible;
+           display:block;
             z-index:10;
 }
 
@@ -116,11 +125,6 @@ svg{
     margin-right: 13%;
 }
 
-.addBtn{
-    margin-right: 0;
-    margin-left: 20%;
-}
-
 .backBtn{
     width: 28px;
     margin-right: 2%;
@@ -130,13 +134,14 @@ svg#addOccasion.addBtn{
     margin-left: 13%;
 }
 
-#addGiftPerPerson{
-    margin-left: 4%;
-}
+
 
 #giftSvg{
     margin-right: 4%;
 
+}
+.h2Container{
+    display: inline;
 }
 
 
@@ -144,11 +149,11 @@ svg#addOccasion.addBtn{
         Modals
 *************************************/
 .formBox{
-  padding: 0.6rem 0;
+  padding: 1.5rem 0;
 }
 input,
 select{
-  line-height: 1.4rem;
+  line-height: 1.8rem;
   font-size: 1rem;
   padding:0 0.5rem;
   max-width:90%; /* to make them responsive */
@@ -168,7 +173,7 @@ select{
   list-style:none;
 }
 [data-role=listview] li{
-  font-size:1.2rem;
+  font-size:1.3rem;
   line-height:3rem;
   height:3rem;
   border:1px solid #B0B0B0;
@@ -181,6 +186,6 @@ select{
 
 }
 [data-role=listview] li.purchased{
-    background-color: #D6789E;
+    background: #D6789E url("../img/purchased.png") no-repeat 90% center;
     color: #FFFFFF;
 }

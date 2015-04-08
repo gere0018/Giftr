@@ -148,8 +148,8 @@ var gere0018_Giftr= {
         trans.executeSql('CREATE TABLE IF NOT EXISTS people(person_id INTEGER PRIMARY KEY AUTOINCREMENT, person_name TEXT)' );
         trans.executeSql('CREATE TABLE IF NOT EXISTS occasions(occ_id INTEGER PRIMARY KEY AUTOINCREMENT, occ_name TEXT)' );
         trans.executeSql('CREATE TABLE IF NOT EXISTS gifts(gift_id INTEGER PRIMARY KEY AUTOINCREMENT, person_id INTEGER, occ_id INTEGER, gift_idea TEXT, purchased INTEGER)' );
-//        trans.executeSql('DELETE FROM sqlite_sequence WHERE name = "people"');
-//        trans.executeSql('DROP TABLE people');
+        //trans.executeSql('INSERT INTO people(person_name) VALUES ("Meera" )');
+        //trans.executeSql('INSERT INTO occasions(occ_name) VALUES ("Birthday" )' );
 
         //If there are people in database, display them in people list
         //************************************************************
@@ -291,7 +291,7 @@ var gere0018_Giftr= {
             var personName = ev.target.innerHTML;
             var personId = ev.target.getAttribute("data-person");
             var H2 = document.querySelector("#gifts-for-person h2");
-            H2.innerHTML = "Gifts for " + personName;
+            H2.innerHTML = personName;
             H2.setAttribute("data-person", personId);
 
             //open gift for person page with transition
@@ -346,7 +346,7 @@ var gere0018_Giftr= {
             var occasionName = ev.target.innerHTML;
             var occasionId = ev.target.getAttribute("data-occasion");
             var H2 = document.querySelector("#gifts-for-occasion h2");
-            H2.innerHTML = "Gifts for " + occasionName;
+            H2.innerHTML =  occasionName;
             H2.setAttribute("data-occasion", occasionId);
 
             //open gift for occasion page with transition
@@ -362,20 +362,27 @@ var gere0018_Giftr= {
                 trans.executeSql( 'SELECT g.gift_idea, g.gift_id, g.purchased, p.person_name FROM gifts AS g INNER JOIN people as p ON g.person_id = p.person_id WHERE g.occ_id = ' + occasionId + ' ORDER BY p.person_name, g.gift_idea', [ ], querySuccess2, errQuery2);
 
                     function querySuccess2( trans, results){
-                        var peopleNames = "";
+                        var personName = "";
                         var giftIdea = "";
                         var giftId;
                         var len = results.rows.length;
+                        var purchased;
                         if(len !== 0){
                             for( var i=0; i<len; i++){
-                                peopleNames = results.rows.item(i).person_name;
+                                personName = results.rows.item(i).person_name;
                                 giftIdea = results.rows.item(i).gift_idea;
                                 giftId = results.rows.item(i).gift_id;
-                                console.log(peopleNames);
-                                console.log(giftIdea);
+                                purchased = results.rows.item(i).purchased;
+                                if(purchased == 1){
+                                     gere0018_Giftr.giftForOccasionListview.innerHTML += '<li data-gift = '
+                                         + giftId + ' class = "purchased">' + giftIdea + ' - ' +
+                                                            personName+ '</li>';
+
+                                }else{
                                 gere0018_Giftr.giftForOccasionListview.innerHTML += '<li data-gift = ' +
                                                             giftId + '>' + giftIdea + ' - ' +
-                                                            peopleNames+ '</li>';
+                                                            personName+ '</li>';
+                                }
 
                             }
                         }

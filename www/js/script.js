@@ -148,8 +148,8 @@ var gere0018_Giftr= {
         trans.executeSql('CREATE TABLE IF NOT EXISTS people(person_id INTEGER PRIMARY KEY AUTOINCREMENT, person_name TEXT)' );
         trans.executeSql('CREATE TABLE IF NOT EXISTS occasions(occ_id INTEGER PRIMARY KEY AUTOINCREMENT, occ_name TEXT)' );
         trans.executeSql('CREATE TABLE IF NOT EXISTS gifts(gift_id INTEGER PRIMARY KEY AUTOINCREMENT, person_id INTEGER, occ_id INTEGER, gift_idea TEXT, purchased INTEGER)' );
-//        trans.executeSql('DELETE FROM sqlite_sequence WHERE name = "people"');
-//        trans.executeSql('DROP TABLE people');
+        //trans.executeSql('INSERT INTO people(person_name) VALUES ("Meera" )');
+        //trans.executeSql('INSERT INTO occasions(occ_name) VALUES ("Birthday" )' );
 
         //If there are people in database, display them in people list
         //************************************************************
@@ -291,7 +291,7 @@ var gere0018_Giftr= {
             var personName = ev.target.innerHTML;
             var personId = ev.target.getAttribute("data-person");
             var H2 = document.querySelector("#gifts-for-person h2");
-            H2.innerHTML = "Gifts for " + personName;
+            H2.innerHTML = personName;
             H2.setAttribute("data-person", personId);
 
             //open gift for person page with transition
@@ -346,7 +346,7 @@ var gere0018_Giftr= {
             var occasionName = ev.target.innerHTML;
             var occasionId = ev.target.getAttribute("data-occasion");
             var H2 = document.querySelector("#gifts-for-occasion h2");
-            H2.innerHTML = "Gifts for " + occasionName;
+            H2.innerHTML =  occasionName;
             H2.setAttribute("data-occasion", occasionId);
 
             //open gift for occasion page with transition
