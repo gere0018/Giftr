@@ -362,20 +362,27 @@ var gere0018_Giftr= {
                 trans.executeSql( 'SELECT g.gift_idea, g.gift_id, g.purchased, p.person_name FROM gifts AS g INNER JOIN people as p ON g.person_id = p.person_id WHERE g.occ_id = ' + occasionId + ' ORDER BY p.person_name, g.gift_idea', [ ], querySuccess2, errQuery2);
 
                     function querySuccess2( trans, results){
-                        var peopleNames = "";
+                        var personName = "";
                         var giftIdea = "";
                         var giftId;
                         var len = results.rows.length;
+                        var purchased;
                         if(len !== 0){
                             for( var i=0; i<len; i++){
-                                peopleNames = results.rows.item(i).person_name;
+                                personName = results.rows.item(i).person_name;
                                 giftIdea = results.rows.item(i).gift_idea;
                                 giftId = results.rows.item(i).gift_id;
-                                console.log(peopleNames);
-                                console.log(giftIdea);
+                                purchased = results.rows.item(i).purchased;
+                                if(purchased == 1){
+                                     gere0018_Giftr.giftForOccasionListview.innerHTML += '<li data-gift = '
+                                         + giftId + ' class = "purchased">' + giftIdea + ' - ' +
+                                                            personName+ '</li>';
+
+                                }else{
                                 gere0018_Giftr.giftForOccasionListview.innerHTML += '<li data-gift = ' +
                                                             giftId + '>' + giftIdea + ' - ' +
-                                                            peopleNames+ '</li>';
+                                                            personName+ '</li>';
+                                }
 
                             }
                         }
@@ -425,7 +432,7 @@ var gere0018_Giftr= {
                     occasionList.remove(occasionList.children[currentId]);
              });
         }
-//        //case 3 delete a gift **********************************************
+       //case 3 delete a gift **********************************************
         if(ev.target.parentElement.id == "giftForPersonListview"){
             var currentId = ev.target.getAttribute("data-gift");
             gere0018_Giftr.db.transaction(function(trans){

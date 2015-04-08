@@ -4,9 +4,17 @@
     <description>
         A sample Apache Cordova application that responds to the deviceready event.
     </description>
-    <author email="gere0018@algonquinlive.com" href="http://cordova.io">
-        Apache Cordova Team
+    <author email="gere0018@algonquinlive.com" href="https://github.com/gere0018/Giftr">
+       Nehmat Gereige
     </author>
     <content src="index.html" />
     <access origin="*" />
+    <platform name="ios">
+              <!-- iOS 8.0+ -->
+              <!-- iPhone / iPod Touch  -->
+              <icon src="www/img/gift-icon-60.png" width="60" height="60" />
+              <icon src="www/img/gift-icon-120.png" width="120" height="120" />
+
+     </platform>
+
 </widget>
