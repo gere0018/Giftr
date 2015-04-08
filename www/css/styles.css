@@ -32,7 +32,7 @@ p{
   height:100%;
 
 }
-svg{
+svg, img{
     display: inline-block;
     width: 30px;
     height: 30px;
