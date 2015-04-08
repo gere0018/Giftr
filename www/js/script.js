@@ -155,7 +155,7 @@ var gere0018_Giftr= {
         //************************************************************
         trans.executeSql( "SELECT * FROM people", [ ], querySuccess1,errQuery1);
         function querySuccess1( trans, results){
-            console.log( results.rows.length );
+            console.log( "number of people in people table is: " + results.rows.length );
             var len = results.rows.length;
             var peopleList = document.querySelector("#list-per-person");
             if(len !== 0){
@@ -181,7 +181,7 @@ var gere0018_Giftr= {
         //******************************************************************
         trans.executeSql( "SELECT * FROM occasions", [ ], querySuccess2, errQuery2);
         function querySuccess2( trans, results){
-            console.log( results.rows.length );
+            console.log( "number of occasions in occasion table is: " +results.rows.length );
             var len = results.rows.length;
             var occasionList = document.querySelector("#list-per-occ");
             if(len !== 0){
@@ -426,33 +426,15 @@ var gere0018_Giftr= {
              });
         }
 //        //case 3 delete a gift **********************************************
-//        if(ev.target.parentElement.id == "occasionListview"){
-//            var currentId = ev.target.getAttribute("data-occasion");
-//            gere0018_Giftr.db.transaction(function(trans){
-//                trans.executeSql('DELETE From occasions WHERE occ_name = "' +
-//                                 currentItem.innerHTML + '"');
-//                //Update gifts table when data is deleted
-//                trans.executeSql('DELETE From gifts WHERE occ_id = ' +
-//                                 currentId );
-//                //delete the person's option from the peopleList
-//                var occasionList = document.querySelector("#list-per-occ");
-//                    occasionList.remove(occasionList.children[currentId]);
-//             });
-//        }
-//        //case 2 delete an Occasion **********************************************
-//        if(ev.target.parentElement.id == "occasionListview"){
-//            var currentId = ev.target.getAttribute("data-occasion");
-//            gere0018_Giftr.db.transaction(function(trans){
-//                trans.executeSql('DELETE From occasions WHERE occ_name = "' +
-//                                 currentItem.innerHTML + '"');
-//                //Update gifts table when data is deleted
-//                trans.executeSql('DELETE From gifts WHERE occ_id = ' +
-//                                 currentId );
-//                //delete the person's option from the peopleList
-//                var occasionList = document.querySelector("#list-per-occ");
-//                    occasionList.remove(occasionList.children[currentId]);
-//             });
-//        }
+        if(ev.target.parentElement.id == "giftForPersonListview"){
+            var currentId = ev.target.getAttribute("data-gift");
+            gere0018_Giftr.db.transaction(function(trans){
+                //Update gifts table when data is deleted
+                trans.executeSql('DELETE From gifts WHERE gift_id = ' +
+                                 currentId );
+             });
+        }
+
 
         //remove the item from the list
         currentItem.parentElement.removeChild(currentItem);

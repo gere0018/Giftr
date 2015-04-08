@@ -180,6 +180,7 @@ select{
   font-family: "Baskerville ", "Cochin", serif;
 
 }
-/*************************************
-        Modals
-*************************************/
+[data-role=listview] li.purchased{
+    background-color: #D6789E;
+    color: #FFFFFF;
+}
