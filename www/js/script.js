@@ -358,27 +358,38 @@ var gere0018_Giftr= {
 
     },
     deleteItem: function(ev){
-        console.log("delete item");
         var currentItem = ev.target;
-        console.log(currentItem);
         //update the database
         console.log(currentItem.innerHTML);
 
         //case 1 delete a person **********************************************
         if(ev.target.parentElement.id == "peopleListview"){
+            var currentId = ev.target.getAttribute("data-person");
             gere0018_Giftr.db.transaction(function(trans){
                 trans.executeSql('DELETE From people WHERE person_name = "' +
                                  currentItem.innerHTML + '"');
-                //add code to update gifts table when data is deleted
+                //Update gifts table when data is deleted
+                trans.executeSql('DELETE From gifts WHERE person_id = ' +
+                                 currentId );
+                //delete the person's option from the peopleList
+                var peopleList = document.querySelector("#list-per-person");
+                    peopleList.remove(peopleList.children[currentId]);
+
              });
         }
 
         //case 2 delete an Occasion **********************************************
         if(ev.target.parentElement.id == "occasionListview"){
+            var currentId = ev.target.getAttribute("data-occasion");
             gere0018_Giftr.db.transaction(function(trans){
                 trans.executeSql('DELETE From occasions WHERE occ_name = "' +
                                  currentItem.innerHTML + '"');
-                //add code to update gifts table when data is deleted
+                //Update gifts table when data is deleted
+                trans.executeSql('DELETE From gifts WHERE occ_id = ' +
+                                 currentId );
+                //delete the person's option from the peopleList
+                var occasionList = document.querySelector("#list-per-occ");
+                    occasionList.remove(occasionList.children[currentId]);
              });
         }
 
